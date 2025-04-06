@@ -1,0 +1,102 @@
+本项目中 最初的数据集
+data
+train包含了25000张猫和狗的混合照片、命名格式为：
+序号-种类.jpg
+test包含对应的25000张命名格式为：序号-jpg的照片
+
+因此本项目首先用代码按照文件名命名cat/dog ，将train中照片分别划分为
+train    ----cat
+           ----dog
+
+为了能使用Imageforlder方法
+加载训练集、验证集、测试集
+我进一步使用代码将train中cat和dog两类继续划分
+划分到 ：            trait--train---cat
+                                         ---dog
+                                 ---val---cat
+                                         ---dog
+                                 ---test---cat
+                                          ---dog
+
+具体代码在data_section.ipynb中 里面有详细的注释。
+
+
+通过此方法 在主代码使用
+#数据集路径配置
+data_dir =r"E:\github复现\resnet实现项目test\data\trait"
+train_dir = data_dir + '\\train'  #注意使用双斜杠不然就是转义字符
+val_dir=data_dir+'\\val' 
+test_dir = data_dir + '\\test'  
+
+
+train_dataset = torchvision.datasets.ImageFolder(
+    root=train_dir, 
+    transform=train_transforms
+)
+
+
+val_dataset = torchvision.datasets.ImageFolder(
+    root=val_dir,
+    transform=test_transforms
+)
+
+test_dataset = torchvision.datasets.ImageFolder(
+    root=test_dir, 
+    transform=test_transforms
+)
+
+
+train_loader = torch.utils.data.DataLoader(
+    train_dataset, 
+    batch_size=32, 
+    shuffle=True, 
+    num_workers=4
+)
+
+val_loader = torch.utils.data.DataLoader(
+    val_dataset,
+    batch_size=32, 
+    shuffle=False, 
+    num_workers=4
+)
+
+test_loader = torch.utils.data.DataLoader(
+    test_dataset, 
+    batch_size=32, 
+    shuffle=False, 
+    num_workers=4
+)
+
+即可自主加载图片和标签。
+
+或者我们可以使用：
+# 数据集路径配置
+data_dir = r"E:\github复现\resnet实现项目test\data"
+train_dir = data_dir + '\\train'  # 仅使用train目录
+#ImageFolder 是 PyTorch 提供的一个类，用于加载图像数据集。它将图像文件和标签存储在一个字典中，其中键是图像的文件路径，值是对应的标签。
+#train_dataset 是一个 ImageFolder 对象，它存储了图像和标签的对应关系
+# 当你通过索引访问 train_dataset 时，ImageFolder 会根据索引返回对应的图像和标签。
+# 划分数据集比例
+total_size = len(train_dataset)
+train_size = int(0.8 * total_size)
+val_size = int(0.1 * total_size)
+test_size = total_size - train_size - val_size
+
+
+该方法将train中的数据集按照比例划分。
+
+对于训练数据我们可以
+封装transform类来进行数据增强：裁剪/旋转/翻转/等
+注意验证集和测试集增强方式和训练集不同 、我们主要对测试集进行数据增强。
+
+我们可以使用meanandstd.ipynb中代码来计算我们自己数据集中的mean和std  后续传入数据增强代码中进行归一化。
+当然也可以使用IMAGENET数据集中的均值和方差，经过对比其实差距不大。
+
+
+当我们把数据集划分好之后、替换成自己的路径 、就可以一键训练啦！
+
+
+
+
+
+

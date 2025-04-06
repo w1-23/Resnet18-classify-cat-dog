@@ -1,0 +1,28 @@
+import os
+import random
+import shutil
+
+# 原始数据集文件夹路径
+original_dataset_folder = rEgithub复现vit-pytorch-mainvit-pytorch-mainexamplesdatatrain
+# 新数据集保存的文件夹路径
+new_dataset_folder = rEgithub复现vit-pytorch-mainvit-pytorch-mainexamplesdatatrainlittle
+# 想要抽取的样本数量
+desired_size = 640
+
+# 获取原始数据集中所有图片文件的路径
+image_files = []
+for root, dirs, files in os.walk(original_dataset_folder)
+    for file in files
+        if file.endswith('.jpg')
+            image_files.append(os.path.join(root, file))
+#输出文件数量
+print(f原始数据集中图片数量 {len(image_files)})
+ # 进行简单随机抽样
+new_image_files = random.sample(image_files, desired_size)
+# 创建新的数据集文件夹
+if not os.path.exists(new_dataset_folder)
+    os.makedirs(new_dataset_folder)
+# 将抽取的图片复制到新的文件夹中
+for image_file in new_image_files
+     shutil.copy2(image_file, new_dataset_folder)
+# print(f成功抽取 {desired_size} 个样本并保存到 {new_dataset_folder})
